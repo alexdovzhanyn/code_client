@@ -1,6 +1,9 @@
 package com.code_client.code_client;
 
-import com.code_client.code_client.installers.RubyInstaller;
+import java.util.Arrays;
+import java.util.List;
+
+import com.code_client.code_client.installers.BasicInstaller;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -12,7 +15,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	
-	RubyInstaller rubyInstaller = new RubyInstaller();
+	BasicInstaller rubyInstaller = new BasicInstaller();
 	
     public static void main(String[] args) {
         launch(args);
@@ -29,7 +32,8 @@ public class Main extends Application {
  
             @Override
             public void handle(ActionEvent event) {
-                rubyInstaller.install();
+            	List<String> command = Arrays.asList("echo", "installing ruby");;
+                rubyInstaller.install(command);
             }
         });
         
