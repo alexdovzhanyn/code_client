@@ -4,3 +4,4 @@
 bin
 .idea/
 code_client.iml
+out/
