@@ -32,7 +32,7 @@ public class Main extends Application {
  
             @Override
             public void handle(ActionEvent event) {
-            	List<String> command = Arrays.asList("echo", "installing ruby");;
+            	List<String> command = Arrays.asList("npm", "install gtop", "-g");
                 rubyInstaller.install(command);
             }
         });
