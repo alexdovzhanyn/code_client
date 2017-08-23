@@ -3,6 +3,7 @@ package code_client.code_client;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 import code_client.code_client.installers.*;
 import javafx.animation.PauseTransition;
@@ -44,6 +45,10 @@ public class Main extends Application {
         javaMsgLabel.setAlignment(Pos.TOP_CENTER);
         //TODO: change this ugly position^^^
         
+        if(isJDKInstalled()) {
+        	javaMsgLabel.setText(javaMsgLabel.getText() + System.lineSeparator() + "NOTE: jdk is already installed");
+        }
+        
         StackPane bitInstallPane = new StackPane();
         
         ToggleSwitch bitInstall = new ToggleSwitch();
@@ -69,6 +74,7 @@ public class Main extends Application {
             	javaInstallButton.setVisible(false);
             	root.setAlignment(javaMsgLabel, Pos.CENTER);
             	javaMsgLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+            	javaMsgLabel.setText("Press yes for administrative\npriveileges when prompted");
             	
             	try {
             		//TODO: if an error is thrown before the ui can update, the ui won't update with the error
@@ -163,5 +169,30 @@ public class Main extends Application {
                 		}
     		});
     	}
+    }
+    
+    public boolean isJDKInstalled() {
+    	//can return false if it's installed but not in PATH
+    	try {
+			Process process = Runtime.getRuntime().exec("javac");
+			Scanner scanner = new Scanner(process.getInputStream()); //scanners are easy
+			String response = "";
+			while(scanner.hasNext()) { response += scanner.nextLine();	}
+			scanner.close();
+			   /*          	   linux               */    /*                               windows                               */ //TODO: add mac
+			if(response.contains("Command not found") || response.contains("is not recognized as an internal or external command")) {
+				return false;
+			}
+			return true;
+		} catch (IOException e) {
+			System.out.println("can't test if jdk is installed:");
+			e.printStackTrace();
+			return false;
+		}
+    }
+    
+    public boolean isJREInstalled() {
+    	//useful
+    	return true;
     }
 }
