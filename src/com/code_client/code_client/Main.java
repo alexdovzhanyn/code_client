@@ -179,8 +179,8 @@ public class Main extends Application {
 			String response = "";
 			while(scanner.hasNext()) { response += scanner.nextLine();	}
 			scanner.close();
-			   /*          	   linux               */    /*                               windows                               */ //TODO: add mac
-			if(response.contains("Command not found") || response.contains("is not recognized as an internal or external command")) {
+			   /*          	   linux               */    /*                               windows                               */    /*                mac               */
+			if(response.contains("Command not found") || response.contains("is not recognized as an internal or external command") || response.contains("command not found")) {
 				return false;
 			}
 			return true;
