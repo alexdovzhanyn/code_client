@@ -69,10 +69,10 @@ public class NodejsInstaller {
 
             System.out.println("finished download");
 
-            Desktop.getDesktop().open(new File(fileName));
-
             fos.close();
             in.close();
+
+            Desktop.getDesktop().open(new File(fileName));
         } catch (IOException e) {
             // Fix exception handling
         }
