@@ -1,4 +1,4 @@
-package code_client.code_client.installers;
+package com.code_client.code_client.installers;
 
 import java.awt.Desktop;
 import java.io.BufferedInputStream;
