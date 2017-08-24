@@ -9,16 +9,18 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 
-public class LinuxJDKInstaller extends JDKInstaller {
+import code_client.code_client.Main;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+
+public class WindowsJDKInstaller extends JDKInstaller {
 	
 	private static URL latestVersionLink;
 	private static boolean _64Bit = true;
-	private static boolean targz = true;
 	
-	public LinuxJDKInstaller(boolean _32Bit, boolean targz) { //first param: true for 32 bit, false is 64 bit, second param: true to download tar.gz, false to download rpm
+	public WindowsJDKInstaller(boolean _32Bit) { //pass the constructor true for 32 bit
 		_64Bit = !_32Bit;
 		isDownloadFinished = false;
-		this.targz = targz;
 		try {
 			this.init();
 		} catch(IOException e) {
@@ -27,20 +29,15 @@ public class LinuxJDKInstaller extends JDKInstaller {
 		}
 	} 
 	
-	public static void init() throws IOException {
-		if(targz) {
-			if(_64Bit) {
-				latestVersionLink = latestJDKVersion("linux-x64.tar.gz");
-			} else {
-				latestVersionLink = latestJDKVersion("linux-i586.tar.gz");
-			}
+	public static StackPane init() throws IOException {
+		if(_64Bit) {
+			latestVersionLink = latestJDKVersion("windows-x64.exe");
 		} else {
-			if(_64Bit) {
-				latestVersionLink = latestJDKVersion("linux-x64.rpm");
-			} else {
-				latestVersionLink = latestJDKVersion("linux-i586.rpm");
-			}
+			latestVersionLink = latestJDKVersion("windows-i586.exe");
 		}
+		
+		StackPane sp = new StackPane();
+		return sp;
 	}
 	
 	public void install() throws IOException {
@@ -57,7 +54,8 @@ public class LinuxJDKInstaller extends JDKInstaller {
 			
 			isDownloadFinished = true;
 			Desktop.getDesktop().open(new File(filename));
-	}    
+	}
+	 
     public boolean isJDKInstalled() {
     	//can return false if it's installed but not in PATH
     	try {
@@ -66,8 +64,8 @@ public class LinuxJDKInstaller extends JDKInstaller {
 			String response = "";
 			while(scanner.hasNext()) { response += scanner.nextLine();	}
 			scanner.close();
-			   /*          	   linux               */
-			if(response.contains("Command not found")) {
+			   /*                               windows                               */
+			if(response.contains("is not recognized as an internal or external command")) {
 				return false;
 			}
 			return true;
@@ -82,13 +80,9 @@ public class LinuxJDKInstaller extends JDKInstaller {
     	//useful
     	return true;
     }
-
-	@Override
-	public String getFileName() {
-		if(targz) {
-			return _64Bit ? "jdk-installer-64bit.tar.gz" : "jdk-installer-64bit.tar.gz";
-		} else {
-			return _64Bit ? "jdk-installer-64bit.rpm" : "jdk-installer-32bit.rpm";
-		}
-	}
+    
+    public String getFileName() {
+		return _64Bit ? "jdk-installer-64bit.exe" : "jdk-installer-32bit.exe";
+    }
+    
 }
