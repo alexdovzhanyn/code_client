@@ -20,15 +20,12 @@ public class RubyInstaller {
         rubyInstallButton.setText("Install Ruby");
         
         // Click action
-        rubyInstallButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-            	// As of right now there's no good way to prompt the user for sudo password
-            	// without the gksu library on linux. When exporting this app for actual use, we
-            	// will have to find a way to bundle this library.
-            	List<String> command = Arrays.asList("/bin/bash", "-c", "gksudo -S \"apt-get --yes --force-yes install ruby-full\"");
-                install(command);
-            }
+        rubyInstallButton.setOnAction(e -> {
+            // As of right now there's no good way to prompt the user for sudo password
+           	// without the gksu library on linux. When exporting this app for actual use, we
+           	// will have to find a way to bundle this library.
+           	List<String> command = Arrays.asList("/bin/bash", "-c", "gksudo -S \"apt-get --yes --force-yes install ruby-full\"");
+           	install(command);
         });
         
         return rubyInstallButton;
