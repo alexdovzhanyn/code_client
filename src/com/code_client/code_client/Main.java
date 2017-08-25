@@ -3,7 +3,7 @@ package com.code_client.code_client;
 import java.util.Arrays;
 import java.util.List;
 
-import com.code_client.code_client.scenes.RubyInstallationLayout;
+import com.code_client.code_client.layouts.RubyInstallationLayout;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -30,7 +30,7 @@ public class Main extends Application {
         windowLayout.setPadding(new Insets(10, 10, 10, 10));
         
         Button rubySceneToggle = new Button("Go to Ruby Installer");
-        rubySceneToggle.setOnAction(e -> clientWindow.setScene(new Scene(RubyInstallationLayout.init(), 1280, 720)));
+        rubySceneToggle.setOnAction(e -> clientWindow.setScene(new Scene(RubyInstallationLayout.display(), 1280, 720)));
         
         leftMenu.getChildren().add(rubySceneToggle);
         
