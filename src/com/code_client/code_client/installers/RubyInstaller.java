@@ -14,6 +14,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.VBox;
 
+/*	This Installer works both for Mac and for Linux
+ *  but we have a separate way of doing it for Windows
+ *  cause Microsoft is a special little snowflake :)
+ * 
+ * 	This installs RVM for the user, and from there we're able to easily
+ *  manage ruby versions for them.
+ */
+
 public class RubyInstaller {
 	
 	// Create the install button for ruby and attach a command to the click handler
