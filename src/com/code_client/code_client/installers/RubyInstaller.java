@@ -31,11 +31,6 @@ public class RubyInstaller {
         
         // Click action
         rubyInstallButton.setOnAction(e -> {
-            /* 
-               As of right now there's no good way to prompt the user for sudo password
-           	   without the gksu library on linux. When exporting this app for actual use, we
-           	   will have to find a way to bundle this library. 
-           	*/
            	List<String> command = Arrays.asList("/bin/bash", "-c", "\\curl -sSL https://get.rvm.io | bash -s stable");
            	int installationExitCode = install(command);
            	
