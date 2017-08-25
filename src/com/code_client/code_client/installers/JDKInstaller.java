@@ -1,6 +1,7 @@
 package code_client.code_client.installers;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,12 +11,26 @@ import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
 public abstract class JDKInstaller {
 	
 	public abstract boolean isJDKInstalled();
 	public abstract void install() throws IOException;
 	public abstract String getFileName();
 	protected static boolean isDownloadFinished = false;
+	public static String filesize;
+	public static long filesizeAsBytes;
 	
 	public static URL latestJDKVersion(String platform) throws UnknownHostException, IOException {
 		URL url = new URL("http://www.oracle.com/technetwork/java/javase/downloads/index.html");
@@ -34,6 +49,7 @@ public abstract class JDKInstaller {
 		url = new URL("http://www.oracle.com" + webpage_url);
 		urlConnection = url.openConnection();
 		
+		System.out.println("next url: ");
 		scanner = new Scanner(urlConnection.getInputStream());
 		webpage = "";
 		while(scanner.hasNext()) {
@@ -43,9 +59,21 @@ public abstract class JDKInstaller {
 		
 		webpage_url = "shit";
 		
+		
+		
 		for(int i = webpage.indexOf(platform + "\""); i > 0; i--) {
 			if(webpage.charAt(i) == '"') {
 				webpage_url = webpage.substring(++i, webpage.indexOf(platform + "\"") + platform.length());
+				break;
+			}
+		}
+		
+		for(int i = webpage.indexOf("MB", webpage.indexOf(platform + "\"") - 200); i > 0; i--) {
+			if(webpage.charAt(i) == '"') {
+				filesize = webpage.substring(++i, webpage.indexOf("MB", webpage.indexOf(platform + "\""))).split(",")[0].replace("MB\"", "");
+				System.out.println("FILESIZE: " + filesize);
+				filesizeAsBytes = Math.round(Float.parseFloat(filesize) * 1000000);
+				System.out.println("FILESIZE: " + filesize + " (" + filesizeAsBytes + " bytes)");
 				break;
 			}
 		}
@@ -190,5 +218,87 @@ public abstract class JDKInstaller {
 				} else {
 					return null;
 				}
+	}
+	
+	public static void display(JDKInstaller i) {
+        Stage window = new Stage();
+
+        //Block events to other windows
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("Installing Java");
+        window.setMinWidth(300);
+        window.setMinHeight(250);
+
+        Label label = new Label();
+        label.setText("Ready to download JDK" + System.lineSeparator() + "for your " + JDKInstaller.getSystemProperties());
+        label.setTextAlignment(TextAlignment.CENTER);
+        
+        Label instructions = new Label("Press \"Yes\" for administrative" + System.lineSeparator() + "access if prompted");
+        instructions.setTextAlignment(TextAlignment.CENTER);
+        
+        Button installButton = new Button("Install JDK for Java");
+        
+        Thread installThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					i.install();
+				} catch(IOException e) {
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							label.setText("Error installing JDK:" + System.lineSeparator() + e.getMessage() + System.lineSeparator() + "Try again?");
+						}
+					});
+				}
+			}
+        });
+        
+        ProgressBar progress = new ProgressBar();
+        
+        Thread progressThread = new Thread(new Runnable() {
+        	@Override
+        	public void run() {
+        		while(!i.isFinishedDownloading()) {
+        			/* Should there be a Thread.sleep(100) here? */
+        			long downloadedBytes = new File(i.getFileName()).length();
+        			float pbPercent = (float) downloadedBytes / (float) filesizeAsBytes;
+        			System.out.println("Percent: " + pbPercent);
+        			Platform.runLater(new Runnable() {
+        				@Override
+        				public void run() {
+        					progress.setProgress((double) pbPercent);
+        				}
+        			});
+        		}
+        		
+        		Platform.runLater(new Runnable() {
+        			@Override
+        			public void run() {
+        				label.setText("Downloaded!");
+        			}
+        		});
+        	}
+        });
+        
+        installButton.setOnAction(e -> {
+			installButton.setVisible(false);
+			label.setText("Downloading Java...");
+			installThread.start();
+			progressThread.start();
+		});
+        
+
+        VBox layout = new VBox(10);
+        layout.getChildren().add(label);
+        layout.getChildren().add(instructions);
+        layout.getChildren().add(installButton);
+        layout.getChildren().add(progress);
+        layout.setAlignment(Pos.CENTER);
+
+        //Display window and wait for it to be closed before returning
+        Scene scene = new Scene(layout);
+        window.setScene(scene);
+        window.showAndWait();
 	}
 }
