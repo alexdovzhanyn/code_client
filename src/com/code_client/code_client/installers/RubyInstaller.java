@@ -1,9 +1,10 @@
 package com.code_client.code_client.installers;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.awt.*;
+import java.io.*;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +31,22 @@ public class RubyInstaller {
         rubyInstallButton.setText("Install Ruby");
         
         // Click action
+
+        String os = System.getProperty("os.name").toLowerCase();
+        System.out.println(os);
+
+        if(os.equals("windows 10") || os.equals("windows 8") || os.equals("windows 8.1") || os.equals("windows 7") || os.equals("Windows XP"))
+        {
+
+            try {
+                wInstall();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
         rubyInstallButton.setOnAction(e -> {
            	List<String> command = Arrays.asList("/bin/bash", "-c", "\\curl -sSL https://get.rvm.io | bash -s stable");
            	int installationExitCode = install(command);
@@ -59,5 +76,73 @@ public class RubyInstaller {
 		
 		return exitCode;
 	}
+
+	private static void wInstall() throws IOException {
+        String du = getOS();
+        String[] fileName = du.split("/");
+
+        boolean check = download(du,fileName[fileName.length-1]);
+
+       //Opens the file after completion
+       if(check)
+       {
+           Desktop.getDesktop().open(new File(System.getProperty("user.home")+"/Downloads/" + fileName[fileName.length-1]));
+       }
+
+    }
+
+
+    //Handles the Download
+
+    public static boolean download(String fileURL,String fileName) {
+        //Downloads the file
+        //Saves the file in user home downloads directory
+
+        try {
+
+
+            URL website = new URL(fileURL);
+            ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home")+"/Downloads/" + fileName);
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+
+            fos.close();
+
+            System.out.println("File Saved");
+
+            return true;
+        }catch (Exception ex) {
+            System.out.println("File not Found");
+            return false;
+        }
+
+    }
+
+
+    private static String getOS()
+    {
+        //Checks for - 32bit or 64bit
+
+        String arch = System.getenv("PROCESSOR_ARCHITECTURE");
+        String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
+
+        String du = ""; //DU means - download URL
+
+        String realArch = arch.endsWith("64")
+                || wow64Arch != null && wow64Arch.endsWith("64")
+                ? "64" : "32";
+
+        System.out.println(realArch);
+        if(realArch.equals("32")){
+            du = "https://github.com/oneclick/rubyinstaller2/releases/download/2.4.1-2/rubyinstaller-2.4.1-2-x86.exe";
+        }
+        else if(realArch.equals("64")) {
+            du = "https://github.com/oneclick/rubyinstaller2/releases/download/2.4.1-2/rubyinstaller-2.4.1-2-x64.exe";
+        }
+
+        return du;
+    }
+
+
 
 }
