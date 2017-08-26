@@ -82,9 +82,9 @@ public class RubyInstaller {
 
     //Handles the Download for Windows
     public static boolean download(String fileURL, String fileName) {
-        //Downloads the file
-        //Saves the file in user home downloads directory
-
+        //Downloads the file and saves it in user home downloads directory
+    	//TODO: We should figure out how to download it into a hidden directory and then delete the file when we're done with it
+    	
         try {
             URL website = new URL(fileURL);
             ReadableByteChannel rbc = Channels.newChannel(website.openStream());
@@ -107,7 +107,6 @@ public class RubyInstaller {
     // Returns the correct download url for Windows based on which architecture is being used
     private static String getDownloadUrlForArchitecture() {
         // Checks for - 32bit or 64bit
-
         String arch = System.getenv("PROCESSOR_ARCHITECTURE");
         String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
 
@@ -117,7 +116,5 @@ public class RubyInstaller {
 
         return downloadUrl;
     }
-
-
 
 }
