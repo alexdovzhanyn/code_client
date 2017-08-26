@@ -3,11 +3,7 @@ package com.code_client.code_client.layouts;
 import com.code_client.code_client.installers.RubyInstaller;
 
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class RubyInstallationLayout {

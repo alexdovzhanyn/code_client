@@ -5,12 +5,9 @@ import java.io.*;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.VBox;
@@ -31,37 +28,30 @@ public class RubyInstaller {
         rubyInstallButton.setText("Install Ruby");
         
         // Click action
-
-        String os = System.getProperty("os.name").toLowerCase();
-        System.out.println(os);
-
-        if(os.equals("windows 10") || os.equals("windows 8") || os.equals("windows 8.1") || os.equals("windows 7") || os.equals("Windows XP"))
-        {
-
-            try {
-                wInstall();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-
         rubyInstallButton.setOnAction(e -> {
-           	List<String> command = Arrays.asList("/bin/bash", "-c", "\\curl -sSL https://get.rvm.io | bash -s stable");
-           	int installationExitCode = install(command);
-           	
-           	// Exit code of 0 usually means success
-           	if (installationExitCode == 0) {
-           		((Labeled) layout.lookup(".label")).setText("Ruby has successfully been installed!");
-           	}
+        	if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+                try {
+                    wInstall();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            } else {
+            	int installationExitCode = unixInstall();
+               	
+               	// Exit code of 0 usually means success
+               	if (installationExitCode == 0) {
+               		((Labeled) layout.lookup(".label")).setText("Ruby has successfully been installed!");
+               	}
+            }
         });
         
         return rubyInstallButton;
 	}
 
 	// Use the command we passed in to the handler here and actually execute it
-	private static int install(List<String> command) {	
+	// This method contains the installation code for both Mac and Linux
+	private static int unixInstall() {	
+		List<String> command = Arrays.asList("/bin/bash", "-c", "\\curl -sSL https://get.rvm.io | bash -s stable");
 		ProcessBuilder pb = new ProcessBuilder(command);
 		int exitCode = 0;
 		
@@ -77,30 +67,25 @@ public class RubyInstaller {
 		return exitCode;
 	}
 
+	// This is the installation code for Windows
 	private static void wInstall() throws IOException {
-        String du = getOS();
-        String[] fileName = du.split("/");
-
-        boolean check = download(du,fileName[fileName.length-1]);
-
+        String downloadUrl = getDownloadUrlForArchitecture();
+        String[] fileName = downloadUrl.split("/");
+        
        //Opens the file after completion
-       if(check)
-       {
-           Desktop.getDesktop().open(new File(System.getProperty("user.home")+"/Downloads/" + fileName[fileName.length-1]));
+       if( download(downloadUrl, fileName[fileName.length - 1]) ) {
+           Desktop.getDesktop().open(new File(System.getProperty("user.home")+"/Downloads/" + fileName[fileName.length - 1]));
        }
 
     }
 
 
-    //Handles the Download
-
-    public static boolean download(String fileURL,String fileName) {
+    //Handles the Download for Windows
+    public static boolean download(String fileURL, String fileName) {
         //Downloads the file
         //Saves the file in user home downloads directory
 
         try {
-
-
             URL website = new URL(fileURL);
             ReadableByteChannel rbc = Channels.newChannel(website.openStream());
             FileOutputStream fos = new FileOutputStream(System.getProperty("user.home")+"/Downloads/" + fileName);
@@ -111,7 +96,7 @@ public class RubyInstaller {
             System.out.println("File Saved");
 
             return true;
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             System.out.println("File not Found");
             return false;
         }
@@ -119,28 +104,18 @@ public class RubyInstaller {
     }
 
 
-    private static String getOS()
-    {
-        //Checks for - 32bit or 64bit
+    // Returns the correct download url for Windows based on which architecture is being used
+    private static String getDownloadUrlForArchitecture() {
+        // Checks for - 32bit or 64bit
 
         String arch = System.getenv("PROCESSOR_ARCHITECTURE");
         String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
 
-        String du = ""; //DU means - download URL
+        String realArch = ( arch.endsWith("64") || wow64Arch != null && wow64Arch.endsWith("64") ) ? "64" : "86";
 
-        String realArch = arch.endsWith("64")
-                || wow64Arch != null && wow64Arch.endsWith("64")
-                ? "64" : "32";
+        String downloadUrl = "https://github.com/oneclick/rubyinstaller2/releases/download/2.4.1-2/rubyinstaller-2.4.1-2-x" + realArch + ".exe";
 
-        System.out.println(realArch);
-        if(realArch.equals("32")){
-            du = "https://github.com/oneclick/rubyinstaller2/releases/download/2.4.1-2/rubyinstaller-2.4.1-2-x86.exe";
-        }
-        else if(realArch.equals("64")) {
-            du = "https://github.com/oneclick/rubyinstaller2/releases/download/2.4.1-2/rubyinstaller-2.4.1-2-x64.exe";
-        }
-
-        return du;
+        return downloadUrl;
     }
 
 
