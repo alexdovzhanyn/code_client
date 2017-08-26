@@ -18,6 +18,8 @@ import javafx.scene.layout.VBox;
  * 
  * 	This installs RVM for the user, and from there we're able to easily
  *  manage ruby versions for them.
+ *  
+ *  NOTE: RVM is only available on UNIX based systems (A.K,A not Windows)
  */
 
 public class RubyInstaller {
