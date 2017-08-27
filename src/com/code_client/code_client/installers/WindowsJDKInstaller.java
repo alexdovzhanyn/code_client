@@ -1,4 +1,4 @@
-package code_client.code_client.installers;
+package com.code_client.code_client.installers;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 
-import code_client.code_client.Main;
+import com.code_client.code_client.Main;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

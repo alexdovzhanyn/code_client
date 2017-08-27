@@ -1,4 +1,4 @@
-package code_client.code_client;
+package com.code_client.code_client;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;

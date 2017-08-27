@@ -1,8 +1,8 @@
-package code_client.code_client;
+package com.code_client.code_client;
 
 import java.io.IOException;
 
-import code_client.code_client.installers.*;
+import com.code_client.code_client.installers.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Label;

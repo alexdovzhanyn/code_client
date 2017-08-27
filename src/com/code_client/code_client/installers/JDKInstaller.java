@@ -1,4 +1,4 @@
-package code_client.code_client.installers;
+package com.code_client.code_client.installers;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -160,14 +160,17 @@ public abstract class JDKInstaller {
     	if(os.contains("windows")) {
 			return new WindowsJDKInstaller(realArch.equals("32"));
 		} else if(os.contains("linux")) {
-			//check for rpm
+			//Check Linux flavour
 			try {
-				Process process = Runtime.getRuntime().exec("rpm");
+				ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "cat /proc/version");
+				Process process = pb.start();
 				Scanner scanner = new Scanner(process.getInputStream()); //scanners are easy
 				String response = "";
 				while(scanner.hasNext()) { response += scanner.nextLine(); }
 				scanner.close();
-				return new LinuxJDKInstaller(realArch.equals("32"), response.contains("not found"));
+				
+				System.out.println(response);
+				return new LinuxJDKInstaller(realArch.equals("32"), response.toLowerCase().contains("ubuntu"));
 			} catch (IOException e) {
 				System.out.println("can't test if jdk is installed:");
 				e.printStackTrace();
