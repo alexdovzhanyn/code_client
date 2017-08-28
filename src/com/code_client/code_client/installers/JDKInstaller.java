@@ -184,12 +184,8 @@ public abstract class JDKInstaller {
 	}
 	
 	public static String getSystemProperties() {
-		//determines real processor architecture
-				String arch = System.getenv("PROCESSOR_ARCHITECTURE");
-				String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
-
-				String realArch = arch.endsWith("64") || wow64Arch != null && wow64Arch.endsWith("64") ? "64" : "32"; //thanks SO
-				
+		
+		String realArch = System.getProperty("sun.arch.data.model");
 				String os = System.getProperty("os.name").toLowerCase();
 		    	
 		    	//just initiate
