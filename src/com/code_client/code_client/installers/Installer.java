@@ -4,9 +4,9 @@ package com.code_client.code_client.installers;
  * This is our main Installer class, every installer should inherit from here
  */
 
-public class Installer {
+class Installer {
 
-	public static String getOperatingSystem() {
+	 static String getOperatingSystem() {
 		String rawOS = System.getProperty("os.name").toLowerCase();
 		String operatingSystem = "";
 		
@@ -32,12 +32,12 @@ public class Installer {
 	}
 	
 	// Returns 32 or 64 depending on system architecture
-	public static int getSystemArchitecture() {
+	static int getSystemArchitecture() {
 		boolean is64bit = false;
 		if (System.getProperty("os.name").contains("Windows")) {
 		    is64bit = (System.getenv("ProgramFiles(x86)") != null);
 		} else {
-		    is64bit = (System.getProperty("os.arch").indexOf("64") != -1);
+		    is64bit = (System.getProperty("os.arch").contains("64"));
 		}
 		
 		return is64bit ? 64 : 86;
