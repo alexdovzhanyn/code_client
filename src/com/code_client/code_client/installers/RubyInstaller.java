@@ -22,7 +22,7 @@ import javafx.scene.layout.VBox;
  *  NOTE: RVM is only available on UNIX based systems (A.K,A not Windows)
  */
 
-public class RubyInstaller {
+public class RubyInstaller extends Installer {
 	
 	// Create the install button for ruby and attach a command to the click handler
 	public static Button init(VBox layout) {
@@ -31,7 +31,7 @@ public class RubyInstaller {
         
         // Click action
         rubyInstallButton.setOnAction(e -> {
-        	if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+        	if(getOperatingSystem() == "Windows") {
                 try {
                     wInstall();
                 } catch (IOException exception) {
@@ -71,7 +71,7 @@ public class RubyInstaller {
 
 	// This is the installation code for Windows
 	private static void wInstall() throws IOException {
-        String downloadUrl = getDownloadUrlForArchitecture();
+        String downloadUrl = "https://github.com/oneclick/rubyinstaller2/releases/download/2.4.1-2/rubyinstaller-2.4.1-2-x" + getSystemArchitecture() + ".exe";
         String[] fileName = downloadUrl.split("/");
         
        //Opens the file after completion
@@ -103,20 +103,6 @@ public class RubyInstaller {
             return false;
         }
 
-    }
-
-
-    // Returns the correct download url for Windows based on which architecture is being used
-    private static String getDownloadUrlForArchitecture() {
-        // Checks for - 32bit or 64bit
-        String arch = System.getenv("PROCESSOR_ARCHITECTURE");
-        String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
-
-        String realArch = ( arch.endsWith("64") || wow64Arch != null && wow64Arch.endsWith("64") ) ? "64" : "86";
-
-        String downloadUrl = "https://github.com/oneclick/rubyinstaller2/releases/download/2.4.1-2/rubyinstaller-2.4.1-2-x" + realArch + ".exe";
-
-        return downloadUrl;
     }
 
 }
