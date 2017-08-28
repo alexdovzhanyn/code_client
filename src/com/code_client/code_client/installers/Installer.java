@@ -1,5 +1,9 @@
 package com.code_client.code_client.installers;
 
+/* 
+ * This is our main Installer class, every installer should inherit from here
+ */
+
 public class Installer {
 
 	public static String getOperatingSystem() {
