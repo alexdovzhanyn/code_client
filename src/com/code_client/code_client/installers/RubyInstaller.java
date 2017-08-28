@@ -5,8 +5,6 @@ import java.io.*;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Arrays;
-import java.util.List;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
@@ -22,7 +20,7 @@ import javafx.scene.layout.VBox;
  *  NOTE: RVM is only available on UNIX based systems (A.K,A not Windows)
  */
 
-public class RubyInstaller extends Installer {
+public class RubyInstaller extends Installer implements InstallerInterface {
 	
 	// Create the install button for ruby and attach a command to the click handler
 	public static Button init(VBox layout) {
@@ -52,9 +50,8 @@ public class RubyInstaller extends Installer {
 
 	// Use the command we passed in to the handler here and actually execute it
 	// This method contains the installation code for both Mac and Linux
-	private static int unixInstall() {	
-		List<String> command = Arrays.asList("/bin/bash", "-c", "\\curl -sSL https://get.rvm.io | bash -s stable");
-		ProcessBuilder pb = new ProcessBuilder(command);
+	private static int unixInstall() {
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "\\curl -sSL https://get.rvm.io | bash -s stable --ruby");
 		int exitCode = 0;
 		
 		try {			
@@ -83,7 +80,7 @@ public class RubyInstaller extends Installer {
 
 
     //Handles the Download for Windows
-    public static boolean download(String fileURL, String fileName) {
+    private static boolean download(String fileURL, String fileName) {
         //Downloads the file and saves it in user home downloads directory
     	//TODO: We should figure out how to download it into a hidden directory and then delete the file when we're done with it
     	
@@ -105,4 +102,26 @@ public class RubyInstaller extends Installer {
 
     }
 
+    @Override
+    public int getDownloadProgress() {
+        if (getOperatingSystem() == "Windows") {
+            //TODO
+            return 0;
+        } else {
+            // For Mac & Linux, we get the filesize from the header response of the curl
+            ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "\\curl -sSL https://get.rvm.io | bash -s stable --ruby | grep -i content-length | awk '{print $2}'");
+
+            try {
+                Process fetchDownloadSizeProcess = pb.start();
+                int exitCode = fetchDownloadSizeProcess.waitFor();
+
+                String downloadSize = new BufferedReader(new InputStreamReader(fetchDownloadSizeProcess.getInputStream())).toString();
+                System.out.println(downloadSize);
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return 0;
+        }
+    }
 }

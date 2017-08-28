@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Main extends Application {
     public static void main(String[] args) {
@@ -19,6 +20,7 @@ public class Main extends Application {
     
     @Override
     public void start(Stage clientWindow) {
+        clientWindow.initStyle(StageStyle.UNDECORATED);
         clientWindow.setTitle("Code Client");     
         VBox leftMenu = new VBox();
         
