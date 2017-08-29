@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import com.code_client.code_client.layouts.RubyInstallationLayout;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -19,19 +21,19 @@ public class Main extends Application {
     }
     
     @Override
-    public void start(Stage clientWindow) {
+    public void start(Stage clientWindow) throws Exception {
         clientWindow.initStyle(StageStyle.UNDECORATED);
         clientWindow.setTitle("Code Client");     
-        VBox leftMenu = new VBox();
+//        VBox leftMenu = new VBox();
         
-        BorderPane windowLayout = new BorderPane();
-        windowLayout.setPadding(new Insets(10, 10, 10, 10));
-        
-        leftMenu.getChildren().addAll(leftMenuPaneActions(clientWindow));
-        
-        windowLayout.setLeft(leftMenu);
-        
-        clientWindow.setScene(new Scene(windowLayout, 1280, 720));
+        Parent layout = FXMLLoader.load(getClass().getResource("views/installer.fxml"));
+//        windowLayout.setPadding(new Insets(10, 10, 10, 10));
+
+//        leftMenu.getChildren().addAll(leftMenuPaneActions(clientWindow));
+
+//        windowLayout.setLeft(leftMenu);
+
+        clientWindow.setScene(new Scene(layout, 1280, 720));
         clientWindow.show();
     }
     
