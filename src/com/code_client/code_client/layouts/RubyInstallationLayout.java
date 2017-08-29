@@ -12,7 +12,7 @@ public class RubyInstallationLayout {
 	public static VBox display() {
 		Label label = new Label("Let's install ruby.");
 		
-		layout.getChildren().addAll(label, RubyInstaller.init(layout));
+		layout.getChildren().addAll(label, new RubyInstaller().generateButton(layout));
 		layout.setAlignment(Pos.CENTER);
 		
 		return layout;

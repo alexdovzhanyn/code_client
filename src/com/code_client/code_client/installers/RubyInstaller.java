@@ -17,13 +17,18 @@ import javafx.scene.layout.VBox;
  * 	This installs RVM for the user, and from there we're able to easily
  *  manage ruby versions for them.
  *  
+ *  This installer DOES NOT implement the InstallerInterface because we would
+ *  have to rewrite the entirety of this installation process, and find
+ * 	a way to support every distribution of Linux in a separate way (this is already
+ *  taken care of by RVM currently)
+ *  
  *  NOTE: RVM is only available on UNIX based systems (A.K,A not Windows)
  */
 
-public class RubyInstaller extends Installer implements InstallerInterface {
+public class RubyInstaller extends Installer {
 	
 	// Create the install button for ruby and attach a command to the click handler
-	public static Button init(VBox layout) {
+	public Button generateButton(VBox layout) {
 		Button rubyInstallButton = new Button();
         rubyInstallButton.setText("Install Ruby");
         
@@ -50,7 +55,7 @@ public class RubyInstaller extends Installer implements InstallerInterface {
 
 	// Use the command we passed in to the handler here and actually execute it
 	// This method contains the installation code for both Mac and Linux
-	private static int unixInstall() {
+	private int unixInstall() {
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "\\curl -sSL https://get.rvm.io | bash -s stable --ruby");
 		int exitCode = 0;
 		
@@ -99,29 +104,6 @@ public class RubyInstaller extends Installer implements InstallerInterface {
             System.out.println("File not Found");
             return false;
         }
-
     }
-
-    @Override
-    public int getDownloadProgress() {
-        if (getOperatingSystem() == "Windows") {
-            //TODO
-            return 0;
-        } else {
-            // For Mac & Linux, we get the filesize from the header response of the curl
-            ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "\\curl -sSL https://get.rvm.io | bash -s stable --ruby | grep -i content-length | awk '{print $2}'");
-
-            try {
-                Process fetchDownloadSizeProcess = pb.start();
-                int exitCode = fetchDownloadSizeProcess.waitFor();
-
-                String downloadSize = new BufferedReader(new InputStreamReader(fetchDownloadSizeProcess.getInputStream())).toString();
-                System.out.println(downloadSize);
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return 0;
-        }
-    }
+    
 }
