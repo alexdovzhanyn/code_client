@@ -17,15 +17,10 @@ import javafx.scene.layout.VBox;
  * 	This installs RVM for the user, and from there we're able to easily
  *  manage ruby versions for them.
  *  
- *  This installer DOES NOT implement the InstallerInterface because we would
- *  have to rewrite the entirety of this installation process, and find
- * 	a way to support every distribution of Linux in a separate way (this is already
- *  taken care of by RVM currently)
- *  
  *  NOTE: RVM is only available on UNIX based systems (A.K,A not Windows)
  */
 
-public class RubyInstaller extends Installer {
+public class RubyInstaller extends Installer implements InstallerInterface {
 	
 	// Create the install button for ruby and attach a command to the click handler
 	public Button generateButton(VBox layout) {
@@ -105,5 +100,32 @@ public class RubyInstaller extends Installer {
             return false;
         }
     }
+
+	@Override
+	public boolean canUseProgressBar() {
+		return false;
+	}
+
+	// Get installed version of ruby (if any)
+	@Override
+	public String getLanguageVersion() {
+		String version = "";
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "ruby -v");
+			
+		try {			
+			Process commandProcess = pb.start();
+			commandProcess.waitFor();
+				
+			version = new BufferedReader(new InputStreamReader(commandProcess.getInputStream())).readLine();
+			
+			if (version.contains("not recognized") || version.contains("not installed") || version.contains("not found")) {
+				return "None";
+			}
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		return version;
+	}
     
 }
